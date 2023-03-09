@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+layout:decorate="~{layout/basic.html}">
+
+<div layout:fragment="content">
+	<h1>영화 입력</h1>
+	<form action="insertMovie" method="post">
+		movie_category_type :
+		<select name="type">
+			<option th:each="movieCategory : ${list}" th:value="${movieCategory.type}">[[${movieCategory.name}]]</option>
+		</select><br>
+		title : <input type="text" name="title"><br>
+		content: <input type="text" name="content"><br>
+		<input type="submit" value="입력">
+	</form>
+	<table class="table">
+		<thead>
+		<th>
+			카테고리명
+			<select id="categorySel" name="type" onchange="location.href='insertMovie?type='+this.options[this.selectedIndex].value">
+				<option value="">선택</option>
+				<option th:each="movieCategory : ${list}" th:value="${movieCategory.type}" th:selected="${type}==${movieCategory.type}">[[${movieCategory.name}]]</option>
+			</select><br>
+		</th>
+		<th>번호</th>
+		<th>제목</th>
+		<th>내용</th>
+		<th></th>
+		<th></th>
+		</thead>
+		<tbody>
+		<tr th:each="movie : ${movieList}">
+			<td>[[${movie.movieCategory.name}]]</td>
+			<td>[[${movie.moviePK.idx}]]</td>
+			<td>[[${movie.title}]]</td>
+			<td>[[${movie.content}]]</td>
+			<td><button th:onclick="deleteOrModifyMovie(1, [[${movie.moviePK.type}]], [[${movie.moviePK.idx}]])">수정</button></td>
+			<td><button th:onclick="deleteOrModifyMovie(2, [[${movie.moviePK.type}]], [[${movie.moviePK.idx}]])">삭제</button></td>
+		</tr>
+		</tbody>
+	</table>
+
+	<!-- 페이징 -->
+	<div th:if="${!movieList.isEmpty()}">
+		<!-- 전역 변수 선언 -->
+		<nav
+				th:with="pageNumber = ${movieList.pageable.pageNumber}, pageSize = ${movieList.pageable.pageSize},totalPages = ${movieList.totalPages},startPage = ${T(java.lang.Math).floor(pageNumber / pageSize) * pageSize + 1},tempEndPage = ${startPage + pageSize - 1},endPage = (${tempEndPage < totalPages ? tempEndPage : totalPages})"
+				aria-label="Page navigation"
+		>
+			<ul class="pagination">
+				<!-- 처음으로 이동 -->
+				<li th:classappend="${pageNumber < pageSize} ? 'disabled'" class="page-item">
+					<a class="page-link" th:href="@{/insertMovie(type=${type}, page=0)}">
+						<span>&laquo;</span>
+						<span class="sr-only">First</span>
+					</a>
+				</li>
+
+				<!-- 이전으로 이동 -->
+				<li th:classappend="${movieList.first} ? 'disabled'" class="page-item">
+					<a class="page-link" th:href="${movieList.first} ? '#' : @{/insertMovie(type=${type}, page=${pageNumber - 1})}" aria-label="Previous">
+						<span aria-hidden="true">&lt;</span>
+						<span class="sr-only">Previous</span>
+					</a>
+				</li>
+
+				<!-- 특정 페이지로 이동 -->
+				<li th:each="page: ${#numbers.sequence(startPage, endPage)}" th:classappend="${page == pageNumber + 1} ? 'active'" class="page-item">
+					<a th:text="${page}" class="page-link" th:href="@{/insertMovie(type=${type}, page=${page - 1})}"></a>
+				</li>
+
+				<!-- 다음으로 이동 -->
+				<li th:classappend="${movieList.last} ? 'disabled'" class="page-item">
+					<a class="page-link" th:href="${movieList.last} ? '#' : @{insertMovie(type=${type}, page=${pageNumber + 1})}" aria-label="Next">
+						<span aria-hidden="true">&gt;</span>
+						<span class="sr-only">Next</span>
+					</a>
+				</li>
+
+				<!-- 마지막으로 이동 -->
+				<li th:classappend=" ${T(java.lang.Math).floor(totalPages / pageSize) * pageSize - 1 <= startPage} ? 'disabled'" class="page-item">
+					<a class="page-link" th:href="@{/insertMovie(type=${type}, page=${totalPages - 1})}">
+						<span>&raquo;</span>
+						<span class="sr-only">Last</span>
+					</a>
+				</li>
+			</ul>
+		</nav>
+	</div> <!-- /container -->
+</div>
+
+<script layout:fragment="script" th:inline="javascript">
+	function categorySel() {
+		console.log($("#categorySel option:selected").val());
+	}
+
+function deleteOrModifyMovie(method, type, idx){
+		var form = document.createElement('form'); // 폼객체 생성
+
+		var input1 = document.createElement('input'); // 값이 들어있는 녀석의 형식
+		input1.setAttribute('type', 'text'); // 값이 들어있는 녀석의 type
+		input1.setAttribute('name', 'type'); // 객체이름
+		input1.setAttribute('value', type); //객체값
+
+		var input2 = document.createElement('input'); // 값이 들어있는 녀석의 형식
+		input2.setAttribute('type', 'text'); // 값이 들어있는 녀석의 type
+		input2.setAttribute('name', 'idx'); // 객체이름
+		input2.setAttribute('value', idx); //객체값
+
+		form.appendChild(input1);
+		form.appendChild(input2);
+		form.setAttribute('method', 'post'); //get,post 가능
+		if(method==1){
+			//수정
+			form.setAttribute('action', "/movieModify"); //보내는 url
+		} else if(method==2){
+			//삭제
+			form.setAttribute('action', "/movieDelete"); //보내는 url
+		}
+		document.body.appendChild(form);
+		form.submit();
+	}
+</script>

@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+layout:decorate="~{layout/basic.html}">
+
+<div layout:fragment="content">
+	<h1>영화 카테고리 입력</h1>
+	<form action="insertMovieCategory" method="post">
+		name : <input type="text" name="name">
+		<input type="submit" value="입력">
+	</form>
+	<hr>
+	<table class="table">
+		<thead>
+		<th>번호</th>
+		<th>카테고리명</th>
+		<th></th>
+		<th></th>
+		</thead>
+		<tbody>
+		<tr th:each="list : ${movieCategoryList}">
+			<td>[[${list.type}]]</td>
+			<td>[[${list.name}]]</td>
+			<td><button th:onclick="deleteOrModifyCategory(1, [[${list.type}]])">수정</button></td>
+			<td><button th:onclick="deleteOrModifyCategory(2, [[${list.type}]])">삭제</button></td>
+		</tr>
+		</tbody>
+	</table>
+
+	<!-- 페이징 -->
+	<div th:if="${!movieCategoryList.isEmpty()}">
+		<!-- 전역 변수 선언 -->
+		<nav
+				th:with="pageNumber = ${movieCategoryList.pageable.pageNumber}, pageSize = ${movieCategoryList.pageable.pageSize},totalPages = ${movieCategoryList.totalPages},startPage = ${T(java.lang.Math).floor(pageNumber / pageSize) * pageSize + 1},tempEndPage = ${startPage + pageSize - 1},endPage = (${tempEndPage < totalPages ? tempEndPage : totalPages})"
+				aria-label="Page navigation"
+		>
+			<ul class="pagination">
+				<!-- 처음으로 이동 -->
+				<li th:classappend="${pageNumber < pageSize} ? 'disabled'" class="page-item">
+					<a class="page-link" th:href="@{/insertMovieCategory(page=0)}">
+						<span>&laquo;</span>
+						<span class="sr-only">First</span>
+					</a>
+				</li>
+
+				<!-- 이전으로 이동 -->
+				<li th:classappend="${movieCategoryList.first} ? 'disabled'" class="page-item">
+					<a class="page-link" th:href="${movieCategoryList.first} ? '#' : @{/insertMovieCategory(page=${pageNumber - 1})}" aria-label="Previous">
+						<span aria-hidden="true">&lt;</span>
+						<span class="sr-only">Previous</span>
+					</a>
+				</li>
+
+				<!-- 특정 페이지로 이동 -->
+				<li th:each="page: ${#numbers.sequence(startPage, endPage)}" th:classappend="${page == pageNumber + 1} ? 'active'" class="page-item">
+					<a th:text="${page}" class="page-link" th:href="@{/insertMovieCategory(page=${page - 1})}"></a>
+				</li>
+
+				<!-- 다음으로 이동 -->
+				<li th:classappend="${movieCategoryList.last} ? 'disabled'" class="page-item">
+					<a class="page-link" th:href="${movieCategoryList.last} ? '#' : @{/insertMovieCategory(page=${pageNumber + 1})}" aria-label="Next">
+						<span aria-hidden="true">&gt;</span>
+						<span class="sr-only">Next</span>
+					</a>
+				</li>
+
+				<!-- 마지막으로 이동 -->
+				<li th:classappend=" ${T(java.lang.Math).floor(totalPages / pageSize) * pageSize - 1 <= startPage} ? 'disabled'" class="page-item">
+					<a class="page-link" th:href="@{/insertMovieCategory(page=${totalPages - 1})}">
+						<span>&raquo;</span>
+						<span class="sr-only">Last</span>
+					</a>
+				</li>
+			</ul>
+		</nav>
+	</div> <!-- /container -->
+</div>
+
+<script layout:fragment="script" th:inline="javascript">
+	function deleteOrModifyCategory(method, type){
+		var form = document.createElement('form'); // 폼객체 생성
+
+		var input1 = document.createElement('input'); // 값이 들어있는 녀석의 형식
+		input1.setAttribute('type', 'text'); // 값이 들어있는 녀석의 type
+		input1.setAttribute('name', 'type'); // 객체이름
+		input1.setAttribute('value', type); //객체값
+
+		form.appendChild(input1);
+		form.setAttribute('method', 'post'); //get,post 가능
+		if(method==1){
+			//수정
+			form.setAttribute('action', "/movieCategoryModify"); //보내는 url
+		} else if(method==2){
+			//삭제
+			form.setAttribute('action', "/movieCategoryDelete"); //보내는 url
+		}
+		document.body.appendChild(form);
+		form.submit();
+
+	}
+</script>

@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{layout/basic.html}">
+
+<div layout:fragment="content">
+	<form action="movieCategoryModifyAction" method="post">
+		<input type="hidden" name="type" th:value="${movie.moviePK.type}">
+		<input type="hidden" name="idx" th:value="${movie.moviePK.idx}">
+		카테고리 : [[${movie.movieCategory.name}]]<br>
+		번호 : [[${movie.moviePK.idx}]]<br>
+		제목 : <input type="text" name="title" th:value="${movie.title}"><br>
+		내용 : <input type="text" name="content" th:value="${movie.content}"><br>
+		<input type="submit">
+	</form>
+</div>
+
+<script layout:fragment="script" th:inline="javascript">
+</script>

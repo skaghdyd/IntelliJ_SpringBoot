@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{layout/basic.html}">
+
+<div layout:fragment="content">
+
+	<form action="/insert" method="post">
+		장르 : <select name="genre">
+			<option  value="0">선택</option>
+
+			<option th:each="genre : ${genreList}" th:value="${genre.gid}">[[${genre.genreName}]]</option>
+
+		</select> <br/><br/>
+		영화 제목 : <input type="text" name="title" /> <br/><br/>
+		영화 내용 : <input type="text" name="content" /> <br/><br/>
+		영화 내용 : <input type="text" name="content" value="아무말"/> <br/><br/>
+
+		<input type="submit" value="저장" />
+	</form>
+
+	<div>
+		<ul th:each=" movie: ${movieAllList}">
+			<li>[[${movie}]]</li>
+			<button id='editBtn' th:value="${movie.did}" th:onclick="|showModal(${movie.did})|">수정</button>
+			<button id="delBtn" th:value="${movie.did}" th:onclick="delMovie()">삭제</button >
+		</ul>
+
+	</div>
+
+	<!--모달-->
+	<div class="modal" tabindex="-1">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title">Modal title</h5>
+					<button type="button" class="btn-close"
+							data-bs-dismiss="modal"></button>
+				</div>
+				<div class="modal-body">
+<!--					<p>Modal body text goes here.</p>-->
+					<form action="/editMovie" method="post">
+					장르: <select name="genre">
+							<option th:each="genre : ${genreList}" th:value="${genre.gid}">[[${genre.genreName}]]</option>
+						</select>
+					제목: <input id="mdTitle" type="text" name="title"/>
+					내용: <input id="mdContent" type="text" name="content"/>
+					</form>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn-secondary"
+							data-bs-dismiss="modal">Close</button>
+					<button type="button"
+							class="btn-primary savBtn">Save</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!--jquery CDN: 바디 안에 넣기!-->
+	<script src="http://code.jquery.com/jquery-3.5.1.min.js"></script>
+</div>
+
+<script layout:fragment="script" th:inline="javascript">
+
+	function showModal(did) {
+		console.log("수정버튼 클릭");
+		// let did = $(this).val();
+		let data = {"did" : did};
+		console.log("did-------:"+did);
+		$.ajax({
+			url: "/editModal",
+			type: "post",
+			data: JSON.stringify(data),
+			contentType : "application/json"
+			//dataType    : "json"
+			//  success: function(){
+			//  	alert("수정되었습니다.");
+			//  	location.reload();
+			//  }
+		}).done(function(smovie){
+			console.log("smovie >>> " + smovie);
+			console.log(".title--:"+smovie.title);
+			console.log(".genre.gid--:"+smovie.genreDto.gid);
+			console.log(".genre.genreName--:"+smovie.genreDto.genreName);
+
+			const modal = new bootstrap.Modal(document.querySelector(".modal"));
+			modal.show();
+
+			document.querySelector(".savBtn").addEventListener("click", function(e) {
+				console.log("test");
+
+			});
+		})
+	}
+
+
+
+		function delMovie (){
+			console.log("삭제버튼 클릭");
+			let did = $("#delBtn").val();
+			let data = {"did" : did};
+			console.log("did-------:"+did);
+			$.ajax({
+				url: "/deleteMovie",
+				type: "post",
+				data: JSON.stringify(data),
+				contentType : "application/json",
+				//dataType    : "json", 이라고 적어놓고 string을 받으면 error로 빠짐.
+				// success: function(){
+				// 	alert("삭제되었습니다.");
+				// 	location.reload();
+				// }
+			}).done(function(){
+				alert("삭제되었습니다.");
+
+			}).done(function () {
+				location.reload();
+			})
+		};
+
+
+
+</script>
+</html>
