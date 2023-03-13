@@ -1,6 +1,6 @@
 #서버포트설정
 server:
-  port: 8092
+  port: 8093
 
 #database 연동설정
 spring:

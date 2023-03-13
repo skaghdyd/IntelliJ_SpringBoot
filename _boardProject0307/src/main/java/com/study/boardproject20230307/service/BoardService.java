@@ -41,7 +41,7 @@ public class BoardService {
 //                MultipartFile boardFile = boardDTO.getBoardFile();
                 String originalFilename = boardFile.getOriginalFilename();
                 String storedFileName = System.currentTimeMillis() + "_" + originalFilename;
-                String savePath = "C:/Users/NHY/Desktop/IdeaProjects/boardProject_20230307/src/main/resources/img/" + storedFileName;
+                String savePath = "C:/Users/NHY/Desktop/IntelliJ_SpringBoot/_boardProject0307/src/main/resources/img/" + storedFileName;
 //                String savePath = "C:/springboot_img/" + storedFileName; // 4.  springboot_img/45645656456_내사진.jpg
                 boardFile.transferTo(new File(savePath));
 
