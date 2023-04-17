@@ -1,7 +1,7 @@
-package com.study.springboot.config;
+package com.study.querydslpractice2.config;
 
+import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -18,5 +18,10 @@ public class QuerydslConfiguration {
     @Bean
     public JPAQueryFactory jpaQueryFactory() {
         return new JPAQueryFactory(em);
+    }
+
+    @Bean
+    public JPAQuery jpaQuery() {
+        return new JPAQuery(em);
     }
 }

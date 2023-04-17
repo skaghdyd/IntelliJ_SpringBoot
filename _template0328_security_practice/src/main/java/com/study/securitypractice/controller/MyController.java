@@ -1,6 +1,6 @@
-package com.study.springboot.controller;
+package com.study.securitypractice.controller;
 
-import com.study.springboot.dto.Member;
+import com.study.securitypractice.dto.Member;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -16,7 +16,7 @@ public class MyController {
         return new Member();
     }
 
-    @GetMapping("/")
+    @GetMapping("/process")
     @ResponseBody
     public Member root(@ModelAttribute("member") Member member) {
         if (member.getMid() == null) {
@@ -51,5 +51,11 @@ public class MyController {
     @GetMapping("/login")
     String login() {
         return "login";
+    }
+
+    @GetMapping("/")
+    @ResponseBody
+    public String root(){
+        return "시작";
     }
 }

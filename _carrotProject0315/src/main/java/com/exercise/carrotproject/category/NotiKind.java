@@ -1,2 +1,6 @@
-package com.exercise.carrotproject.category;public enum NotiKind {
+package com.exercise.carrotproject.category;
+
+public enum NotiKind {
+    ACTIVITY,
+    KEYWORD
 }

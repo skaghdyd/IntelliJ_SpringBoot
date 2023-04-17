@@ -1,4 +1,4 @@
-package com.study.springboot.dto;
+package com.study.securitypractice.dto;
 
 import lombok.*;
 

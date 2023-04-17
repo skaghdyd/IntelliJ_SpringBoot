@@ -1,6 +1,11 @@
-package com.exercise.carrotproject.member;
+package com.exercise.carrotproject.member.entity;
+
+import com.exercise.carrotproject.category.Loc;
+import com.exercise.carrotproject.chat.entity.ChatRoom;
+import com.exercise.carrotproject.post.entity.Post;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Table(name = "member")
@@ -24,4 +29,34 @@ public class Member {
     @Enumerated(EnumType.STRING)
     @Column(name = "loc")
     private Loc loc;
+
+    @OneToMany(mappedBy = "seller")
+    private List<Post> postList;
+
+    @OneToMany(mappedBy = "seller")
+    private List<ChatRoom> roomListBySeller;
+
+    @OneToMany(mappedBy = "buyer")
+    private List<ChatRoom> roomListByBuyer;
+
+    @OneToMany(mappedBy = "member")
+    private List<Wish> wishList;
+
+    @OneToMany(mappedBy = "seller")
+    private List<SellList> sellListsBySeller;
+
+    @OneToMany(mappedBy = "buyer")
+    private List<SellList> sellListsByBuyer;
+
+    @OneToMany(mappedBy = "seller")
+    private List<BuyList> buyListsBySeller;
+
+    @OneToMany(mappedBy = "buyer")
+    private List<BuyList> buyListsByBuyer;
+
+    @OneToMany(mappedBy = "member")
+    private List<Keyword> keywordList;
+
+    @OneToMany(mappedBy = "member")
+    private List<Notification> notificationList;
 }

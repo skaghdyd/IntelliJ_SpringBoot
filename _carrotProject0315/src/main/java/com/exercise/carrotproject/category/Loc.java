@@ -1,4 +1,4 @@
-package com.exercise.carrotproject.member.category;
+package com.exercise.carrotproject.category;
 
 public enum Loc {
     GANGDONG,

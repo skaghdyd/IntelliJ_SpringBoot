@@ -1,10 +1,50 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
+    <meta charset="UTF-8">
+    <title>Title</title>
 </head>
 <body>
-$END$
+<input name="uploadFiles" type="file" multiple/>
+<input name="uploadFiles" type="file" multiple/>
+<button class="uploadBtn">Upload</button>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+<script>
+    $('.uploadBtn').click(function () {
+        let formData = new FormData();
+        let inputFile = $("input[type='file']");
+        for(let i=0; i<inputFile.length; i++){
+            console.log(inputFile[i]);
+            let files = inputFile[i].files;
+            for (let i = 0; i < files.length; i++) {
+                console.log(files[i]);
+                formData.append("uploadFiles", files[i]);
+            }
+        }
+        console.log(formData);
+        // let files = inputFile[0].files;
+        // for (let i = 0; i < files.length; i++) {
+        //     console.log(files[i]);
+        //     formData.append("uploadFiles", files[i]);
+        // }
+
+        $.ajax({
+            url: '/uploadAjax',
+            processData: false,
+            contentType: false,
+            data: formData,
+            type: 'POST',
+            dataType: 'text',
+            success: function (result) {
+                console.log(result);
+                //화면처리
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                console.log(textStatus);
+            }
+        });
+    })
+
+</script>
 </body>
 </html>

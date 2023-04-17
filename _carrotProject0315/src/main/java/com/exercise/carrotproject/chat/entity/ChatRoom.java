@@ -1,6 +1,7 @@
-package com.exercise.carrotproject.chat;
+package com.exercise.carrotproject.chat.entity;
 
-import com.exercise.carrotproject.member.Member;
+import com.exercise.carrotproject.member.entity.Member;
+import com.exercise.carrotproject.post.entity.Post;
 
 import javax.persistence.*;
 import java.util.List;
@@ -14,13 +15,20 @@ public class ChatRoom {
     private Long roomId;
 
     @ManyToOne
-    @JoinColumn(name = "mem_id")
-    @Column(name = "seller_id")
-    private List<Member> sellerId;
+    @JoinColumn(name = "post_id")
+    private Post post;
 
     @ManyToOne
-    @JoinColumn(name = "mem_id")
-    @Column(name = "buyer_id")
-    private List<Member> buyerId;
+    @JoinColumn(name = "seller_id")
+    private Member seller;
 
+    @ManyToOne
+    @JoinColumn(name = "buyer_id")
+    private Member buyer;
+
+    @OneToMany(mappedBy = "room")
+    private List<Chat> chatList;
+
+    @OneToMany(mappedBy = "room")
+    private List<ChatImg> chatImgList;
 }

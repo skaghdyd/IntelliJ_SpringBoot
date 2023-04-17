@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+</head>
+<body>
+<input name="uploadFiles" type="file" multiple />
+<button class="uploadBtn">Upload</button>
+<div class="uploadResult">
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+
+<script>
+  $('.uploadBtn').click(function () {
+    var formData = new FormData();
+    var inputFile = $("input[type='file']");
+    var files = inputFile[0].files;
+    for (var i = 0; i < files.length; i++) {
+      console.log(files[i]);
+      formData.append("uploadFiles", files[i]);
+    }
+    $.ajax({
+      url: '/uploadAjax',
+      processData: false,
+      contentType: false,
+      data: formData,
+      type: 'POST',
+      dataType: 'json',
+      success: function (result) {
+        console.log(result);
+        // 화면 처리
+        showUploadedImages(result);
+      },
+      error: function (jqXHR, textStatus, errorThrown) {
+        console.log(textStatus);
+      }
+    });
+  });
+
+  function showUploadedImages(arr) {
+    console.log(arr);
+    var divArea = $(".uploadResult");
+    var str = "";
+    for(var i = 0; i < arr.length; i++){
+      str += `<div>
+                <img src=/display?fileName=${arr[i].thumbnailURL}>
+                <button class='removeBtn' data-name=${arr[i].imageURL}>REMOVE</button>
+                </div>
+               `
+      // str += "<div>";
+      // str += "<img src='/display?fileName="+arr[i].thumbnailURL+"'>";
+      // str += "<button class='removeBtn' data-name='"+arr[i].imageURL +"'>REMOVE</button>"
+      // str += "</div>";
+    }
+    divArea.append(str);
+  }
+
+  //'uploadResult클래스 중 removeBtn클래스를 가진 요소'가 클릭 되었을 때 실행되는 함수
+  $(".uploadResult").on("click", ".removeBtn", function(e){
+    var target = $(this);
+    var fileName = target.data("name");
+    var targetDiv = $(this).closest("div");
+    console.log(fileName);
+    //첫번째 매개변수 : URL
+    //두번째 매개변수 : 전송 데이터
+    //세번째 매개변수 : 콜백 함수
+    $.post('/removeFile', {fileName: fileName}, function(result){
+      console.log(result);
+      if(result === t
+        rue){
+        targetDiv.remove();
+      }
+    })
+  });
+</script>
+</body>
+</html>

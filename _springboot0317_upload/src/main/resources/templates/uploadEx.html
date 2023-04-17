@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+</head>
+<body>
+<input name="uploadFiles" type="file" multiple />
+<button class="uploadBtn">Upload</button>
+<div class="uploadResult">
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+
+<script>
+  $('.uploadBtn').click(function () {
+    var formData = new FormData();
+    var inputFile = $("input[type='file']");
+    var files = inputFile[0].files;
+    for (var i = 0; i < files.length; i++) {
+      console.log(files[i]);
+      formData.append("uploadFiles", files[i]);
+    }
+    $.ajax({
+      url: '/uploadAjax',
+      processData: false,
+      contentType: false,
+      data: formData,
+      type: 'POST',
+      dataType: 'json',
+      success: function (result) {
+        console.log(result);
+        // 화면 처리
+        showUploadedImages(result);
+      },
+      error: function (jqXHR, textStatus, errorThrown) {
+        console.log(textStatus);
+      }
+    });
+  });
+
+  function showUploadedImages(arr) {
+    console.log(arr);
+    var divArea = $(".uploadResult");
+    var str = "";
+    for(var i = 0; i < arr.length; i++){
+      str += `<div>
+                <img src=/display?fileName=${arr[i].thumbnailURL}>
+                <button class='removeBtn' data-name=${arr[i].imageURL}>REMOVE</button>
+                </div>
+               `
+      // str += "<div>";
+      // str += "<img src='/display?fileName="+arr[i].thumbnailURL+"'>";
+      // str += "<button class='removeBtn' data-name='"+arr[i].imageURL +"'>REMOVE</button>"
+      // str += "</div>";
+    }
+    divArea.append(str);
+  }
+</script>
+</body>
+</html>
